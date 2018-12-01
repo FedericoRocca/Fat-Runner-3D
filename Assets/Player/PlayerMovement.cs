@@ -11,6 +11,9 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;
     private bool isGrounded = true;
 
+    private float moveHorizontal;
+    private float moveVertical;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -18,25 +21,26 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
+        moveHorizontal = Input.GetAxis("Horizontal");
+        moveVertical = Input.GetAxis("Vertical");
 
         // Rotación
+        // Derecha
         if( moveHorizontal > 0 )
         {
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, 0), Rotationspeed * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 90, 0), Rotationspeed * Time.deltaTime);
         }
+        // Izquierda
         if( moveHorizontal < 0 )
         {
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, -180, 0), Rotationspeed * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, -90, 0), Rotationspeed * Time.deltaTime);
         }
 
         // Calculo del movimiento
         Vector3 movement = new Vector3(moveHorizontal, 0.0f, 0.0f);
 
-        Debug.Log("moveVertical " + moveVertical);
         // Salto
-        if ((moveVertical > 0 || Input.GetKeyDown(KeyCode.Space)) && isGrounded == true)
+        if ( ((moveVertical > 0 || moveVertical < 0) || Input.GetKeyDown(KeyCode.Space)) && isGrounded == true)
         {
             movement.y = 1 * JumpForce;
             isGrounded = false;
@@ -50,5 +54,15 @@ public class PlayerMovement : MonoBehaviour
     void OnCollisionStay()
     {
         isGrounded = true;
+    }
+
+    public bool getisGrounded()
+    {
+        return isGrounded;
+    }
+
+    public float getVelocity()
+    {
+        return rb.velocity.x;
     }
 }
